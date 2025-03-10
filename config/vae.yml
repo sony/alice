@@ -1,0 +1,16 @@
+
+
+model._type: vae
+
+env.criterion.wts:
+  kl: <>kl-wt
+
+kl-wt: 0.1
+
+wandb:
+  loss_kl: 10
+
+  latent_usage: 1000
+
+log:
+  loss_kl: yes

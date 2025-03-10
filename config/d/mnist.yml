@@ -1,0 +1,51 @@
+
+dataset._type: mnist
+
+decoder.output-nonlin: tanh
+
+# events.monitor.max-imgs: 25
+max-imgs: 25
+
+latent-dim: 4
+
+model.rec-type: bce
+
+enc-hidden: [256]
+dec-hidden: [256]
+cls-hidden: [256]
+mod-hidden: [256]
+
+budget: 30000
+
+env.pre:
+  _type: pixel-processor
+  app:
+    input: observation
+    output: reconstruction
+    # picture: rec-out
+    # image: image 
+
+env.task:
+  _type: classification
+  app:
+    loss: loss_cls
+
+env.viz_rec:
+  _type: image-comparison
+  app:
+    vcomp: rec_comparison
+    source: image
+    target: picture
+    caption: label
+
+env.viz_intv:
+  _type: mechanism
+  content: [<>env.viz_rec, <>model, <>env.pre]
+  external:
+    rec_comparison: intv_comparison
+  internal:
+    latent: probe
+    image: image
+    label: intervention
+
+intervention.condition: 10

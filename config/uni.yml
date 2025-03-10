@@ -1,0 +1,37 @@
+
+batch-size: 1024
+lr: 0.001
+amsgrad: yes
+suppress: 100
+
+clear-cache: yes
+
+budget: 100000
+ckpt-freq: 10000
+eval-freq: 1000
+
+events.checkpointer:
+  _type: checkpointer
+  freq: <>ckpt-freq
+
+events.evaluator:
+  _type: evaluator
+  eval-reporter: <>events.monitor
+  freq: <>eval-freq
+  metrics: <>wandb
+
+events.monitor:
+  _type: wandb
+  freqs: <>wandb
+  max-imgs: 12
+
+dataset.split: train
+eval-batch-size: <>batch-size 
+eval-split: 0.1
+
+trainer._type: trainer
+planner._type: planner
+reporter._type: reporter
+# unit: epochs
+
+

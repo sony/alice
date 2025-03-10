@@ -1,0 +1,75 @@
+_base: [ce-emb]
+
+model.app:
+  features: latent
+
+env.task.app.loss: loss_cls
+
+env.gt-intervention:
+  _type: intervention/label
+
+optimizer:
+  objective: loss_cls
+
+intervention_optim:
+  _type: adam
+  objective: loss_sem
+
+env.semantic:
+  _type: mechanism
+  content: [<>env.task, <>model]
+  external:
+    loss_cls: loss_sem
+    macro: macro_sem
+    micro: micro_sem
+    roc_auc: roc_auc_sem
+  internal:
+    label: intervention
+    latent: probe
+
+env.detacher:
+  _type: detacher
+  app:
+    original: latent
+    detached: latent_d
+
+intervention:
+  _type: intervention/centroid
+  app:
+    ambient: latent_d
+
+# intervention:
+#   _type: intervention/module
+#   app:
+#     ambient: latent_d
+  
+#   module:
+#     _type: mlp
+#     hidden: [512, 512]
+#     # output-dim: 128
+
+#   condition: /data/felix/cache/static/coco-bert-text-interventions.h5
+
+
+log:
+  loss_sem: yes
+  macro_sem: yes
+
+events.monitor:
+  _type: wandb
+  freqs:
+    loss: null # deletes that entry
+    loss_cls: 10
+    loss_sem: 10
+    macro: 10
+    micro: 10
+    # roc_auc: 10
+    macro_sem: 10
+    micro_sem: 10
+    # roc_auc_sem: 10
+
+
+trainer._type: intervention-trainer
+
+intervention_optim._type: avoid-adam
+# intervention_optim.targets: [<>model]

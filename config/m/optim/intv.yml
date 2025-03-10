@@ -1,0 +1,15 @@
+
+trainer._type: intervention-trainer
+
+
+intervention_optim._type: avoid-adam
+
+
+optimizer:
+  _type: adam
+  objective: loss
+
+
+intervention_optim:
+  _type: avoid-adam
+  objective: loss_sem

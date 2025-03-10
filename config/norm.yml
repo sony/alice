@@ -1,0 +1,8 @@
+
+model._type: sae
+
+mag-wt: 0
+
+intervention.normalize: yes
+
+wandb.loss_mag: no

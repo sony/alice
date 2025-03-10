@@ -1,0 +1,79 @@
+
+
+_base: [m/optim/simple, uni]
+
+project-name: "{dataset.name}-ced"
+
+model:
+  _type: autoencoder
+  _mod.supervised: yes
+  app:
+    loss: loss_rec
+    features: latent
+
+
+env.viz_latent_mag:
+  _type: vecinfo
+  app:
+    vector: latent
+    magnitude: latent_mag
+    scale: latent_scale
+
+env.viz_intv_mag:
+  _type: vecinfo
+  app:
+    vector: probe
+    magnitude: intv_mag
+    scale: intv_scale
+
+env.viz_support:
+  _type: support
+  app:
+    src: latent
+    tgt: probe
+
+
+env.viz_pred_stats:
+  _type: prediction-gap
+
+  app:
+    ambient: prediction
+    intervened: prediction_sem
+
+
+env.criterion:
+  _type: multi-loss
+  wts:
+    rec: <>rec-wt
+    # reg: <>reg-wt
+    cls: <>cls-wt
+    # con: <>con-wt
+    # man: <>man-wt
+
+rec-wt: 10
+# reg-wt: 1
+cls-wt: 1
+
+wandb:
+  loss_rec: 10
+  loss_cls: 10
+  # loss_man: 10
+  accuracy: 10
+  # accuracy_man: 10
+
+  # rec_comparison: 1000
+  # intv_comparison: 1000
+
+  latent_mag: 100
+  latent_scale: 100
+  # intv_mag: 100
+  # intv_scale: 100
+  # amd: 100
+  
+
+log:
+  loss_rec: yes
+  loss_cls: yes
+  # loss_man: yes
+  accuracy: yes
+  # accuracy_man: yes

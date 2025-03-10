@@ -1,0 +1,7 @@
+
+
+enc-hidden: [1024, 1024]
+dec-hidden: [1024, 1024]
+cls-hidden: [1024, 1024]
+mod-hidden: [1024]
+

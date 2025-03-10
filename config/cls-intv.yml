@@ -1,0 +1,49 @@
+
+_base: [cls-emb]
+
+
+
+
+env.task:
+  _type: multi-classification
+
+  app:
+    loss: loss_cls
+
+env.gt-intervention:
+  _type: intervention/label
+  # app:
+  #   label: label
+  #   intervention: intervention
+
+env.intervention:
+  _type: intervention/centroid
+  app:
+    ambient: embedding
+    # probe: probe
+
+env.semantic:
+  _type: mechanism
+  content: [<>env.task, <>model]
+  external:
+    loss_cls: loss_sem
+    macro: macro_sem
+    micro: micro_sem
+    roc_auc: roc_auc_sem
+  internal:
+    label: intervention
+    embedding: probe
+
+log:
+  macro_sem: yes
+
+env.criterion:
+  _type: multi-loss
+  wts:
+    cls: <>cls-wt
+    sem: <>sem-wt
+
+
+cls-wt: 1
+sem-wt: 1
+

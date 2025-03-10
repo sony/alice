@@ -1,0 +1,7 @@
+
+
+
+enc-hidden: [256, 256, 256]
+dec-hidden: [256, 256, 256]
+cls-hidden: [256, 256, 256]
+mod-hidden: [256, 256, 256]

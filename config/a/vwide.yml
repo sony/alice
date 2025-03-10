@@ -1,0 +1,11 @@
+_base: [a/mlp]
+
+
+latent-dim: 512
+
+large-width: 2048
+small-width: 1024
+
+
+
+

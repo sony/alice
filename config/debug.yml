@@ -1,0 +1,547 @@
+
+# device: cpu
+
+######################
+
+# _meta.script_name: collect
+
+# # # _base: [coco-embed]
+# _base: [coco-text-embed]
+
+# split: val
+# batch-size: 500
+
+
+# record-step: yes
+# grab: embedding
+
+##################
+
+# _meta.script_name: check-timm
+
+# name: vit_base_patch32_224
+
+# model._type: vit
+
+##################
+
+# _meta.script_name: train
+
+# _base: [supexp]
+# rec-wt: 100
+
+# use-wandb: no
+# record-step: yes
+# # grab: res_classifier
+
+##################
+
+# device: cpu
+
+_meta.script_name: train
+
+skip-0: yes
+use-wandb: no
+record-step: yes
+# grab: proximity_stats
+
+# _base: [cls]
+# _base: [ce-intv]
+# _base: [d/mnist, m/ae, a/mlp]
+# _base: [d/mnist, m/toy/cls, a/mlp]
+# _base: [d/mnist, m/toy/ce, a/mlp]
+# _base: [intv/centroid, d/mnist, m/toy/ce, a/mlp]
+# _base: [intv/module, d/mnist, m/toy/ced, a/mlp]
+# _base: [intv/centroid, d/mnist, m/toy/ced, a/mlp]
+# _base: [m/cls, a/mlp, d/coco-cap]
+# _base: [m/cls, a/mlp, d/coco-emb]
+# _base: [vae, intv/module, m/ced-man, a/mlp, d/mnist]
+# _base: [wide, vae, intv/module, m/ced-man, a/mlp, d/coco-emb]
+# _base: [vae, intv/module, m/ced-man2, a/mlp, d/coco-cap]
+# _base: [norm, m/ced-man2, intv/module, a/mlp, d/coco-cap]
+# _base: [norm, intv/module, m/ced-man, a/mlp, d/coco-emb]
+# _base: [norm, intv/module, m/cedm, a/mlp, d/coco-emb]
+# _base: [m/clip, d/coco-full]
+# _base: [m/cyclip, d/coco-full]
+# _base: [norm, m/ced-obs, a/mlp, d/coco-emb]
+_base: [norm, intv/linear, m/ced-man, d/coco-img, h/ws]
+# _base: [norm, intv/module, m/ced-man, d/coco-img]
+
+# load-text-encoder: /data/felix/cache/checkpoints/sae128_cococap_20250117_171402/ckpt_080000/model-encoder.pt
+# load-image-encoder: /data/felix/cache/checkpoints/ae128_coco_20250114_230254/ckpt_020000/model-encoder.pt
+# intervention.load: /data/felix/cache/checkpoints/ae128_coco_20250114_230254/ckpt_020000/interventions.pt
+
+# force-size: 1024
+
+# split: val
+
+dropout: 0.1
+nonlin: silu
+norm: ln
+large-width: 1024
+small-width: 512
+
+# ckpt-freq: no
+# eval-freq: 4
+# budget: 10
+
+# suppress: 100
+
+# cls-hidden: []
+# classifier._type: linear
+
+# model._type: vae
+
+# env.criterion.wts:
+#   kl: <>kl-wt
+
+# intervention.load: /data/felix/cache/checkpoints/vae128_coco_20250108_163649/ckpt_010000/interventions
+# intervention.load: /data/felix/cache/checkpoints/vae128_coco_20250108_183502/ckpt_020000/interventions
+
+step2: d
+
+# rec-wt: 100
+# kl-wt: 0.01
+
+# wandb:
+#   loss_kl: 10
+
+# log:
+#   loss_kl: yes
+
+# latent-dim: 8
+
+
+
+skip-0: no # test save
+
+# weight-decay: 0.0001
+
+# classifier._type: linear
+# cls-hidden: [256, 256, 256]
+# modifier._type: linear
+
+# env.criterion.wts.mag: <>mag-wt
+# mag-wt: 0.1
+
+# intervention_optim.objective: loss_man
+
+# intervention.load: /data/felix/cache/checkpoints/ae128_coco_20250114_230254/ckpt_020000/interventions.pt
+
+# model.fix_classifier: /data/felix/cache/checkpoints/ae128_coco_20250114_230254/ckpt_020000/model-classifier.pt
+
+# fig train vae intv/module m/ced-man a/mlp d/coco-emb
+# j1 happy-cosmos-25
+# fig train vae intv/module m/ced-man2 a/mlp d/coco-cap --intervention.load /data/felix/cache/checkpoints/vae128_coco_20250108_183502/ckpt_020000/interventions --kl-wt 0.001
+# j1 grateful-sunset-8
+
+# fig train large vae intv/module m/ced-man a/mlp d/coco-emb
+# j2 earnest-bird-26
+
+# fig train vae intv/centroid m/ced-man a/mlp d/coco-emb
+# j3 rose-oath-28
+# fig train vae intv/centroid m/ced-man2 a/mlp d/coco-cap --intervention.load /data/felix/cache/checkpoints/vae128_coco_20250108_183756/ckpt_010000 --kl-wt 0.001
+# j3 young-puddle-9
+
+# fig train vae intv/module m/ced a/mlp d/coco-emb
+# j4 glad-fire-29
+
+# fig train vae intv/centroid m/ced a/mlp d/coco-emb
+# j5 true-valley-30
+
+## batch-size 1024
+
+# fig train vae intv/module m/ced-man a/mlp d/coco-emb
+# j6 swept-waterfall-31
+
+# fig train vae intv/centroid m/ced-man a/mlp d/coco-emb
+# j7 mild-disco-32
+
+# fig train large vae intv/module m/ced-man a/mlp d/coco-emb
+# j2 earnest-plant-33
+
+# fig train vae intv/module m/ced a/mlp d/coco-emb
+# j4 icy-night-34
+
+# fig train vae intv/centroid m/ced a/mlp d/coco-emb
+# j5 dazzling-sponge-35
+
+##
+
+# fig train vae intv/module m/ced-man a/mlp d/coco-emb --batch-size 4096 --lr 0.002 --preload
+# j1 zany-wind-40
+
+# fig train vae intv/module m/ced-man a/mlp d/coco-emb --amsgrad yes
+# j2 crimson-butterfly-41
+
+# fig train vae intv/module m/ced-man a/mlp d/coco-emb --optimizer.lr 0.0005 --intervention_optim.lr 0.001
+# j3 earthy-donkey-42
+
+# fig train vae intv/module m/ced-man a/mlp d/coco-emb --modifier._type linear
+# j4 noble-lake-43
+
+# fig train wide vae intv/module m/ced-man a/mlp d/coco-emb
+# j5 helpful-plant-44
+
+# fig train vae intv/module m/ced-man a/mlp d/coco-emb --regularize-delta no
+# j6 stoic-disco-45
+
+##
+
+# fig train vae intv/module m/ced-man a/mlp d/coco-emb --suppress 100
+# j1 major-firefly-46
+
+# fig train vae intv/module m/ced-man a/mlp d/coco-emb --suppress 100 --optimizer.lr 0.0005 --intervention_optim.lr 0.001
+# j2 crisp-aardvark-47
+
+# fig train norm intv/module m/ced-man a/mlp d/coco-emb
+# j3 summer-plant-48
+
+##
+
+# fig train norm intv/module m/ced-man a/mlp d/coco-emb
+# j1 valiant-fire-53
+# sae-mod
+
+# fig train norm intv/module m/ced a/mlp d/coco-emb
+# j2 sunny-frost-54
+# sae-mod-sem
+
+# fig train norm intv/centroid m/ced-man a/mlp d/coco-emb
+# j3 rosy-lake-55
+# sae-centroid
+
+# fig train vae intv/module m/ced-man a/mlp d/coco-emb
+# j4 azure-microwave-56
+# vae-mod
+
+# fig train norm intv/module m/ced-man a/mlp d/coco-emb --clear-cache
+# j3 neat-glade-57
+# sae-mod-clear_cache
+
+# fig train m/clip d/coco-full
+# j1 quiet-fog-1
+
+# fig train m/clip d/coco-full --optimizer.lr 0.005
+# j1 polar-night-4
+
+# fig train m/clip d/coco-full --optimizer.lr 0.01
+# j2 mild-bee-5
+
+# fig train norm intv/module m/ced-man a/mlp d/coco-emb --lr 0.005
+# j3 stilted-breeze-58
+
+# fig train vae intv/module m/ced-man a/mlp d/coco-emb --optimizer.lr 0.001 --intervention_optim.lr 0.005
+# j4 curious-sun-59
+
+# fig train vae intv/module m/ced-man a/mlp d/coco-emb --optimizer.lr 0.005 --intervention_optim.lr 0.001
+# j5 upbeat-oath-60
+
+# fig train norm intv/module m/ced-man a/mlp d/coco-cap
+# j6 major-pine-8
+
+# fig train norm intv/module m/ced-man2 a/mlp d/coco-cap --intervention.load /data/felix/cache/checkpoints/ae128_coco_20250114_230254/ckpt_020000/interventions
+# j7 celestial-terrain-10
+
+# fig train norm m/ced-man2 intv/module a/mlp d/coco-cap --intervention.load: /data/felix/cache/checkpoints/ae128_coco_20250114_230254/ckpt_020000/interventions.pt
+# j1 trim-armadillo-11
+
+# fig train norm m/ced-man2 intv/module a/mlp d/coco-cap --intervention.load /data/felix/cache/checkpoints/ae128_coco_20250114_230254/ckpt_020000/interventions.pt --model.fix_classifier /data/felix/cache/checkpoints/ae128_coco_20250114_230254/ckpt_020000/model-classifier.pt
+# j2 frosty-fog-12
+
+# fig train norm m/ced-man2 intv/module a/mlp d/coco-cap --intervention.load /data/felix/cache/checkpoints/ae128_coco_20250114_230254/ckpt_020000/interventions.pt --model.fix_classifier /data/felix/cache/checkpoints/ae128_coco_20250114_230254/ckpt_020000/model-classifier.pt --step2 d
+# j2 astral-lion-13
+
+# fig train m/clip d/coco-full --load-text-encoder /data/felix/cache/checkpoints/sae128_cococap_20250117_171402/ckpt_080000/model-encoder.pt --load-image-encoder /data/felix/cache/checkpoints/ae128_coco_20250114_230254/ckpt_020000/model-encoder.pt
+# j1 vital-firebrand-6
+
+# fig train m/clip d/coco-full --load-text-encoder /data/felix/cache/checkpoints/sae128_cococap_20250117_171402/ckpt_080000/model-encoder.pt --load-image-encoder /data/felix/cache/checkpoints/ae128_coco_20250114_230254/ckpt_020000/model-encoder.pt --lr 0.0001
+# j3 classic-bird-7
+
+# fig train m/clip d/coco-full --force-size 1024
+# j4 generous-voice-8
+
+# fig train m/clip d/coco-full --force-size 1024 --load-text-encoder /data/felix/cache/checkpoints/sae128_cococap_20250117_171402/ckpt_080000/model-encoder.pt --load-image-encoder /data/felix/cache/checkpoints/ae128_coco_20250114_230254/ckpt_020000/model-encoder.pt --lr 0.0001
+# j5 stellar-plasma-9
+
+# fig train m/clip d/coco-full --force-size 2048
+# j1 magic-salad-10
+
+# fig train m/clip d/coco-full --force-size 2048 --load-text-encoder /data/felix/cache/checkpoints/sae128_cococap_20250117_171402/ckpt_080000/model-encoder.pt --load-image-encoder /data/felix/cache/checkpoints/ae128_coco_20250114_230254/ckpt_020000/model-encoder.pt --lr 0.0001
+# j6 earnest-fire-11
+
+# fig train m/clip d/coco-full --force-size 4096
+# j7 dazzling-haze-12
+
+# fig train m/clip d/coco-full --force-size 4096 --load-text-encoder /data/felix/cache/checkpoints/sae128_cococap_20250117_171402/ckpt_080000/model-encoder.pt --load-image-encoder /data/felix/cache/checkpoints/ae128_coco_20250114_230254/ckpt_020000/model-encoder.pt --lr 0.0001
+# j8 vague-star-13
+
+# fig train m/clip d/coco-full --force-size 8192
+# j9 trim-fire-14
+
+# fig train m/clip d/coco-full --force-size 8192 --load-text-encoder /data/felix/cache/checkpoints/sae128_cococap_20250117_171402/ckpt_080000/model-encoder.pt --load-image-encoder /data/felix/cache/checkpoints/ae128_coco_20250114_230254/ckpt_020000/model-encoder.pt --lr 0.0001
+# j10 swept-eon-15
+
+# fig train m/clip d/coco-full --force-size 16384 --lr 0.001
+# j11 absurd-glade-16
+
+# fig train m/clip d/coco-full --force-size 16384 --load-text-encoder /data/felix/cache/checkpoints/sae128_cococap_20250117_171402/ckpt_080000/model-encoder.pt --load-image-encoder /data/felix/cache/checkpoints/ae128_coco_20250114_230254/ckpt_020000/model-encoder.pt --lr 0.0001
+# j12 treasured-universe-17
+
+# fig train m/clip d/coco-full --force-size 512 --batch-size 512
+# j1 sparkling-dust-18
+
+# fig train m/cyclip d/coco-full
+# j1 bright-gorge-19
+
+# fig train norm m/ced-obs a/mlp d/coco-emb
+# j2 crimson-vortex-61
+# j2 worthy-tree-62
+
+# fig train m/clip d/coco-full --force-size 256 --batch-size 256
+# j3 proud-cosmos-20
+
+# fig train m/clip d/coco-full --force-size 128 --batch-size 128
+# j4 iconic-moon-21
+
+
+# fig train m/clip d/coco-full --force-size 512 --batch-size 512 --load-text-encoder /data/felix/cache/checkpoints/sae128_cococap_20250117_171402/ckpt_080000/model-encoder.pt --load-image-encoder /data/felix/cache/checkpoints/ae128_coco_20250114_230254/ckpt_020000/model-encoder.pt --lr 0.0001
+# j4 light-armadillo-22
+
+# fig train m/clip d/coco-full --force-size 256 --batch-size 256 --load-text-encoder /data/felix/cache/checkpoints/sae128_cococap_20250117_171402/ckpt_080000/model-encoder.pt --load-image-encoder /data/felix/cache/checkpoints/ae128_coco_20250114_230254/ckpt_020000/model-encoder.pt --lr 0.0001
+# j5 driven-plasma-23
+
+# fig train m/clip d/coco-full --force-size 128 --batch-size 128
+# j6 soft-field-24
+
+# fig train m/clip d/coco-full --force-size 128 --batch-size 128 --load-text-encoder /data/felix/cache/checkpoints/sae128_cococap_20250117_171402/ckpt_080000/model-encoder.pt --load-image-encoder /data/felix/cache/checkpoints/ae128_coco_20250114_230254/ckpt_020000/model-encoder.pt --lr 0.0001
+# j7 upbeat-brook-25
+
+# fig train m/clip d/coco-full --force-size 1024 --load-text-encoder /data/felix/cache/checkpoints/sae128_cococap_20250117_171402/ckpt_080000/model-encoder.pt --load-image-encoder /data/felix/cache/checkpoints/ae128_coco_20250114_230254/ckpt_020000/model-encoder.pt --lr 0.00001
+# j1 light-sun-26
+
+# fig train m/clip d/coco-full --no-scaling
+# j2 fresh-shape-27
+
+# fig train m/cyclip d/coco-full --no-scaling
+# j3 absurd-pyramid-28
+
+# fig train m/clip d/coco-full
+# j1 mild-sun-29
+
+# fig train m/clip d/coco-full --force-size 1024 --load-text-encoder /data/felix/cache/checkpoints/sae128_cococap_20250117_171402/ckpt_080000/model-encoder.pt --load-image-encoder /data/felix/cache/checkpoints/ae128_coco_20250114_230254/ckpt_020000/model-encoder.pt --lr 0.00001 --no-scaling
+# j2 warm-paper-30
+
+# fig train norm intv/module m/ced-man a/mlp d/coco-emb --lr 0.005
+# j3 astral-pyramid-63
+
+# fig train norm intv/module m/ced-man a/mlp d/coco-emb --lr 0.002
+# j4 stellar-elevator-64
+
+# fig train norm intv/module m/ced-man a/mlp d/coco-emb --lr 0.001
+# j5 serene-pyramid-65
+
+# fig train norm intv/module m/ced-man a/mlp d/coco-emb --lr 0.0005
+# j6 hopeful-shadow-66
+
+# fig train norm intv/module m/ced-man a/mlp d/coco-emb --lr 0.0002
+# j7
+
+#########
+
+# fig train norm intv/module m/ced-man d/coco-img
+# j1 hardy-snowball-67
+
+# fig train norm intv/linear m/ced-man d/coco-img
+# j2 dashing-flower-68
+
+
+# fig train norm intv/module m/ced-man d/coco-img --dropout 0.1 --nonlin silu
+# j1 charmed-donkey-70
+
+# fig train norm intv/module m/ced-man d/coco-img --dropout 0.1 --nonlin silu --norm ln --large-width 1024 --small-width 512 --norm ln
+# j2 solar-cherry-71
+# j2 colorful-plasma-72
+
+
+# fig train norm intv/centroid m/ced-man d/coco-img
+# j1 swift-snowflake-73
+
+# fig train vae intv/module m/ced-man d/coco-img
+# j2 twilight-vortex-74
+
+
+
+
+###########
+
+
+# fig train m/clip d/coco-full --force-size 4096
+
+# fig train m/clip d/coco-full --force-size 8192
+
+
+# fig train m/clip d/coco-full --force-size 16384
+# fig train m/clip d/coco-full --force-size 32768
+
+# fig train vae intv/module m/ced-man a/mlp d/coco-emb --suppress 100 --optimizer.lr 0.001 --intervention_optim.lr 0.002
+
+# fig train vae intv/module m/ced-man a/mlp d/coco-emb --suppress 100 --optimizer.lr 0.0001 --intervention_optim.lr 0.0002
+
+
+############
+
+
+# fig train norm intv/module m/ced-man d/coco-img
+# j1 hardy-snowball-67
+
+# fig train norm intv/linear m/ced-man d/coco-img
+# j2 dashing-flower-68
+
+
+# fig train norm intv/module m/ced-man d/coco-img --dropout 0.1 --nonlin silu
+# j1 charmed-donkey-70
+
+# fig train norm intv/module m/ced-man d/coco-img --dropout 0.1 --nonlin silu --norm ln --large-width 1024 --small-width 512 --norm ln
+# j2 solar-cherry-71
+# j2 colorful-plasma-72
+
+
+# fig train norm intv/centroid m/ced-man d/coco-img
+# j1 swift-snowflake-73
+
+# fig train vae intv/module m/ced-man d/coco-img
+# j2 twilight-vortex-74
+
+# fig train h/ws2 norm intv/module m/ced-man d/coco-img --lr 0.01
+# 2j1 dashing-water-75
+
+# fig train h/ws3 norm intv/module m/ced-man d/coco-img
+# 3j1 astral-star-76
+
+# fig train h/ws3 norm intv/module m/ced-man d/coco-img --nonlin silu
+# 3j2 warm-forest-77
+
+# fig train h/ws3 norm intv/module m/ced-man d/coco-img --nonlin prelu
+# 3j3 colorful-disco-78
+
+# fig train a/vdeep a/vwide h/ws3 norm intv/module m/ced-man d/coco-img --dropout 0.1 --nonlin silu
+# 3j4 elated-tree-79
+
+# fig train a/vdeep a/vwide h/ws3 norm intv/module m/ced-man d/coco-img --nonlin silu
+# 3j5 wandering-pyramid-80
+
+
+# fig train h/ws2 norm intv/module m/ced-man d/coco-img --dropout 0.1
+# 2j2 cool-bush-81
+
+# fig train a/vdeep h/ws2 norm intv/module m/ced-man d/coco-img --nonlin silu
+# 2j3 stoic-firefly-82
+
+# fig train a/vwide h/ws2 norm intv/module m/ced-man d/coco-img --nonlin silu
+# 2j4 curious-durian-83
+
+# fig train h/ws2 norm intv/module m/ced-man d/coco-img --nonlin silu --latent-dim 256
+# 2j5 revived-wave-84
+
+# fig train h/ws2 norm intv/module m/ced-man d/coco-img --nonlin silu --latent-dim 512
+# 2j6 elated-totem-85
+
+# fig train a/wide h/ws3 norm intv/module m/ced-man d/coco-img --nonlin silu
+# 3j6 devoted-brook-86
+
+# fig train a/vwide h/ws3 norm intv/module m/ced-man d/coco-img --nonlin silu
+# 3j7 revived-energy-87
+
+
+#########
+
+
+# fig train h/ws2 norm intv/module m/ced-man d/coco-img --dropout 0.1 --nonlin prelu
+# 2j1 pleasant-deluge-88
+
+# fig train h/ws2 norm intv/module m/ced-man d/coco-img --dropout 0.1 --nonlin relu
+# 2j2 avid-vortex-89
+
+# fig train h/ws2 norm intv/module m/ced-man d/coco-img --dropout 0.1 --latent-dim 256
+# 2j3 sunny-bird-90
+
+# fig train h/ws2 norm intv/module m/ced-man d/coco-img --dropout 0.1 --latent-dim 512
+# 2j4 vocal-cosmos-91
+
+
+
+# fig train h/ws3 norm intv/module m/ced-man d/coco-img --dropout 0.1 --nonlin silu
+# 3j1 rare-capybara-92
+
+# fig train h/ws3 norm intv/module m/ced-man d/coco-img --dropout 0.2
+# 3j2 rose-dragon-93
+
+# fig train h/ws3 a/wide norm intv/module m/ced-man d/coco-img --dropout 0.1 --latent-dim 512
+# 3j3 graceful-oath-94
+
+# fig train h/ws3 a/wide a/deep norm intv/module m/ced-man d/coco-img --dropout 0.1 --latent-dim 512
+# 3j4 sparkling-sun-95
+
+
+
+# fig train h/ws2 norm intv/module m/ced-man d/coco-img --modifier.dropout 0.1
+# 2j5 divine-elevator-97
+
+# fig train h/ws2 norm intv/module m/ced-man d/coco-img --classifier.dropout 0.1
+# 2j6 pretty-water-98
+
+# fig train h/ws3 norm intv/module m/ced-man d/coco-img --encoder.dropout 0.1 --decoder.dropout 0.1
+# 3j5 scarlet-aardvark-96
+
+# fig train h/ws3 norm intv/module m/ced-man d/coco-img --classifier.dropout 0.1 --modifier.dropout 0.1
+# 3j6 leafy-surf-99
+
+# fig train h/ws3 norm intv/module m/ced-man d/coco-img --classifier.dropout 0.1 --modifier.dropout 0.1 --latent-dim 256
+# 3j7 volcanic-leaf-100
+
+# fig train h/ws3 norm intv/module m/ced-man d/coco-img --classifier.dropout 0.1 --modifier.dropout 0.1 --latent-dim 512
+# 3j8 laced-shape-101
+
+# fig train h/ws2 a/wide norm intv/module m/ced-man d/coco-img --classifier.dropout 0.1 --modifier.dropout 0.1 --latent-dim 512
+# 2j7 feasible-resonance-102
+
+# fig train h/ws2 a/wide norm intv/module m/ced-man d/coco-img --classifier.dropout 0.1 --latent-dim 512
+# 2j8 revived-glitter-103
+
+# fig train h/ws2 a/wide norm intv/module m/ced-man d/coco-img --classifier.dropout 0.1 --latent-dim 512 --small-width 1024
+# 2j9 super-deluge-104
+
+# fig train h/ws3 a/wide norm intv/module m/ced-man d/coco-img --classifier.dropout 0.1 --latent-dim 256 --small-width 1024
+# 3j9 flowing-sea-105
+
+# fig train h/ws3 a/wide norm intv/module m/ced-man d/coco-img --classifier.dropout 0.1 --latent-dim 128 --small-width 1024
+# 3j10 desert-armadillo-106
+
+### selected
+
+# fig train h/ws2 norm intv/module m/ced-man d/coco-img --dropout 0.1
+# 2j2 cool-bush-81
+# /ssd/felix/cache/checkpoints/sae128_coco_20250123_154936/ckpt_020000
+
+# fig train h/ws2 norm intv/module m/ced-man d/coco-img --classifier.dropout 0.1
+# 2j6 pretty-water-98
+# /ssd/felix/cache/checkpoints/sae128_coco_20250124_142201/ckpt_020000
+
+# fig train h/ws3 norm intv/module m/ced-man d/coco-img --classifier.dropout 0.1 --modifier.dropout 0.1 --latent-dim 512
+# 3j8 laced-shape-101
+# /mnt/ssd1/felix/cache/checkpoints/sae512_coco_20250124_144839/ckpt_020000
+
+# fig train h/ws2 a/wide norm intv/module m/ced-man d/coco-img --classifier.dropout 0.1 --latent-dim 512 --small-width 1024
+# 2j9 super-deluge-104
+# /ssd/felix/cache/checkpoints/sae512_coco_20250124_164611/ckpt_020000
+
+# fig train h/ws3 a/wide norm intv/module m/ced-man d/coco-img --classifier.dropout 0.1 --latent-dim 256 --small-width 1024
+# 3j9 flowing-sea-105
+# /mnt/ssd1/felix/cache/checkpoints/sae256_coco_20250124_184821/ckpt_020000
+
+# fig train h/ws3 a/wide norm intv/module m/ced-man d/coco-img --classifier.dropout 0.1 --latent-dim 128 --small-width 1024
+# 3j10 desert-armadillo-106
+# /mnt/ssd1/felix/cache/checkpoints/sae128_coco_20250124_184905/ckpt_020000
+
+## clip

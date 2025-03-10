@@ -1,0 +1,17 @@
+# _meta.script_name: embed
+
+path: "{dataset.dataroot}/embeddings/{dataset.name}-{model.name}.h5"
+
+dataset._type: imagenet
+# split: val
+
+model._type: clip
+model.gap.image_embedding: embedding
+vit: ViT-B/32
+
+products:
+  - embedding
+  - label
+  - image_loc
+
+

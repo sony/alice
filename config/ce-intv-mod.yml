@@ -1,0 +1,11 @@
+_base: [ce-intv]
+
+intervention:
+  _type: intervention/module
+  module:
+    _type: mlp
+    hidden: [512, 512]
+    # output-dim: 128
+
+  condition: <>interventions-text-path
+

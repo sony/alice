@@ -1,0 +1,28 @@
+
+encoder:
+  _type: mlp
+  hidden: <>enc-hidden
+
+decoder:
+  _type: mlp
+  hidden: <>dec-hidden
+
+classifier:
+  _type: mlp
+  hidden: <>cls-hidden
+
+modifier:
+  _type: mlp
+  hidden: <>mod-hidden
+  # output-dim: 128
+
+
+latent-dim: 128
+
+enc-hidden: [<>large-width, <>large-width]
+dec-hidden: [<>large-width, <>large-width]
+cls-hidden: [<>large-width, <>large-width]
+mod-hidden: [<>small-width]
+
+large-width: 512
+small-width: 256

@@ -1,0 +1,10 @@
+
+# WARNING: use `uni.yml` instead!
+
+batch-size: 128
+lr: 0.001
+
+budget: 100000
+ckpt-freq: 10000
+
+project-name: "{dataset.name}-toy"

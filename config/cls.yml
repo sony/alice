@@ -1,0 +1,69 @@
+
+
+batch-size: 128
+lr: 0.001
+
+budget: 100000
+ckpt-freq: 10000
+
+project-name: "coco-cls"
+saveroot: /data/felix/cache/checkpoints
+
+# model._type: classifier
+# extractor:
+#   _type: vit-raw
+#   pretrained: yes
+#   app:
+#     image: input
+#   name: vit_base_patch32_224
+# head:
+#   _type: linear
+
+model:
+  _type: vit-raw
+  name: vit_base_patch32_224
+  app:
+    input: image
+    output: prediction
+  replace-head: yes
+
+
+env.task._type: multi-classification
+
+log:
+  macro: yes
+
+# dataset:
+#   _type: raw-coco
+#   app:
+#     class_presence: label
+#   # split: val
+
+dataset:
+  # _type: preload-coco
+  # preload-batch-size: 256
+  # label-key: class_presence
+  _type: simple-coco
+  
+
+events.monitor:
+  _type: wandb
+  freqs:
+    loss: 10
+    macro: 10
+    micro: 10
+    roc_auc: 10
+
+
+events.checkpointer:
+  _type: checkpointer
+  freq: <>ckpt-freq
+
+optimizer._type: adam
+
+trainer._type: trainer
+planner._type: planner
+reporter._type: reporter
+
+
+

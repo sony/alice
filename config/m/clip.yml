@@ -1,0 +1,30 @@
+
+
+_base: [m/optim/simple, a/img-text, uni]
+
+
+project-name: "{dataset.name}-clip"
+
+
+model:
+  _type: clip
+
+env.alignment:
+  _type: alignment
+  app.similarity_matrix: logits
+
+wandb:
+  loss: 10
+  logit_scale: 10
+
+  alignment: 50
+  uniformity: 50
+  unalignment: 50
+  ret1: 50
+  ret5: 50
+  ret10: 50
+
+log:
+  loss: yes
+  logit_scale: yes
+

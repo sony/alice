@@ -1,0 +1,34 @@
+
+
+_base: [m/clip]
+
+
+model:
+  _type: cyclip
+  app:
+    loss: loss_clip
+
+env.criterion:
+  _type: multi-loss
+  wts:
+    clip: <>clip-wt
+    cross: <>cross-wt
+    inmodal: <>inmodal-wt
+
+clip-wt: 1
+cross-wt: 0.25
+inmodal-wt: 0.25
+
+
+wandb:
+  loss_clip: 10
+  loss_cross: 10
+  loss_inmodal: 10
+
+log:
+  loss: yes
+  loss_clip: yes
+  loss_cross: yes
+  loss_inmodal: yes
+  # logit_scale: yes
+

@@ -1,0 +1,11 @@
+# for collect script
+# path: "/data/felix/coco/embeddings/{dataset.split}-{model.name}.h5"
+
+
+
+interventions-text-path: /ssd/felix/cache/static/coco-bert-text-interventions.h5
+
+saveroot: /ssd/felix/cache/checkpoints
+wandb-dir: /ssd/felix/cache/wandb
+
+dataroot: /ssd/felix/coco

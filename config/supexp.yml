@@ -1,0 +1,236 @@
+
+semantic-dim: 64
+noise-dim: 256
+latent-dim: 320 # required due to separate splitter (until gears)
+
+nonsemantic-dim: <>noise-dim
+
+num-slices: 512
+
+batch-size: 1024
+lr: 0.001
+
+budget: 100000
+ckpt-freq: 10000
+
+project-name: "{dataset.name}"
+
+dataset:
+  _type: imagenet-clip
+  app:
+    embedding: observation
+
+model:
+  _type: supervised-autoencoder
+  app:
+    loss: loss_rec
+    features: semantic
+
+env.semantics:
+  _type: splitter
+  size0: <>semantic-dim
+  size1: <>nonsemantic-dim
+  app:
+    original: latent
+    part0: semantic
+    part1: nonsemantic
+
+env.probe:
+  _type: mechanism
+  content: [<>env.semantics]
+  external:
+    merged: probe
+  internal:
+    semantic: semantic
+    nonsemantic: prior
+
+env.latent_response:
+  _type: mechanism
+  content: [<>model]
+  external:
+    latent: response
+  internal:
+    observation: reconstruction
+
+env.noisy_response:
+  _type: mechanism
+  content: [<>model]
+  external:
+    latent: noisy_resp
+    reconstruction: noisy_rec
+  internal:
+    latent: probe
+    observation: noisy_rec
+
+env.noisy_semantics:
+  _type: mechanism
+  content: [<>env.semantics]
+  external:
+    semantic: noisy_semantic
+  internal:
+    latent: noisy_resp
+  
+env.response_helper:
+  _type: mechanism
+  content: [<>model]
+  external:
+    prediction: response_pred
+    accuracy: response_accuracy
+    semantic: response_semantic
+  internal:
+    latent: response
+
+env.consistency_loss:
+  _type: mse
+  app:
+    prediction: noisy_semantic
+    target: semantic
+    loss: loss_con
+
+
+env.reg:
+  _type: slice-wae
+  latent-dim: <>nonsemantic-dim
+  app:
+    latent: nonsemantic
+    loss: loss_reg
+
+
+env.criterion:
+  _type: multi-loss
+  wts:
+    rec: <>rec-wt
+    reg: <>reg-wt
+    cls: <>cls-wt
+    con: <>con-wt
+
+clip_classifier:
+  _type: clip-cls-imagenet
+
+env.ref_obs_clip_cls:
+  _type: mechanism
+  content: [<>clip_classifier]
+  external:
+    accuracy: obs_accuracy
+  internal:
+    embedding: observation
+    label: label
+    
+env.ref_rec_clip_cls:
+  _type: mechanism
+  content: [<>clip_classifier]
+  external:
+    accuracy: rec_accuracy
+  internal:
+    embedding: reconstruction
+    label: label
+
+env.ref_resp_clip_cls:
+  _type: mechanism
+  content: [<>clip_classifier]
+  external:
+    accuracy: res_accuracy
+  internal:
+    embedding: noisy_rec
+    label: label
+
+
+
+env.accuracy_gap:
+  _type: difference
+  app:
+    score: accuracy
+    reference: response_accuracy
+    difference: accuracy_gap
+
+env.embedding_gap:
+  _type: difference
+  app:
+    score: obs_accuracy
+    reference: rec_accuracy
+    difference: embedding_gap
+
+env.task:
+  _type: classification
+  app:
+    loss: loss_cls
+
+
+env.ref_response_classifier:
+  _type: mechanism
+  content: [<>env.task, <>model]
+  external:
+    accuracy: res_classifier
+  internal:
+    semantic: noisy_semantic
+    label: label
+
+log:
+  loss_rec: yes
+  loss_reg: yes
+  loss_cls: yes
+  loss_con: yes
+
+  accuracy: yes
+  # response_accuracy: yes
+  # accuracy_gap: yes
+
+  # obs_accuracy: yes
+  # rec_accuracy: yes
+  res_accuracy: yes
+  # embedding_gap: yes
+
+
+events.monitor:
+  _type: wandb
+  freqs:
+    loss: 10
+    macro: 10
+    micro: 10
+    roc_auc: 50
+
+
+encoder:
+  _type: mlp
+  hidden: <>enc-hidden
+  # input-dim: 512
+  # output-dim: <>latent-dim
+
+decoder:
+  _type: mlp
+  hidden: <>dec-hidden
+  # input-dim: <>latent-dim
+  # output-dim: 512
+
+classifier:
+  _type: mlp
+  hidden: <>cls-hidden
+  # input-dim: <>semantic-dim
+  # output-dim: 1000
+
+
+hidden: [512, 512]
+enc-hidden: <>hidden
+dec-hidden: <>hidden
+cls-hidden: [256]
+nonlin: mish
+
+
+rec-wt: 1
+reg-wt: 1
+cls-wt: 1
+con-wt: 1
+
+
+events.checkpointer:
+  _type: checkpointer
+  freq: <>ckpt-freq
+# env.eval._type: evaluator
+
+
+optimizer._type: adam
+
+
+trainer._type: trainer
+planner._type: planner
+reporter._type: reporter

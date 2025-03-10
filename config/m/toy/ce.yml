@@ -1,0 +1,81 @@
+
+_base: [m/optim/intv, uni]
+
+project-name: "{dataset.name}-ce"
+
+model:
+  _type: classifier
+  extractor: <>encoder
+  head: <>classifier
+  app:
+    features: latent
+
+encoder.output-dim: <>latent-dim
+
+env.detacher:
+  _type: detacher
+  app:
+    original: latent
+    detached: latent_d
+
+env.gt-intervention:
+  _type: intervention/label
+
+
+intervention.app.ambient: latent_d
+# intervention.app.ambient: latent
+
+env.task:
+  _type: classification
+  app.loss: loss_cls
+
+env.semantic:
+  _type: mechanism
+  content: [<>env.task, <>model]
+  external:
+    loss_cls: loss_sem
+    accuracy: accuracy_sem
+  internal:
+    label: intervention
+    latent: probe
+
+env.viz_latent_mag:
+  _type: vecinfo
+  app:
+    vector: latent
+    magnitude: latent_mag
+    scale: latent_scale
+
+env.viz_intv_mag:
+  _type: vecinfo
+  app:
+    vector: probe
+    magnitude: intv_mag
+    scale: intv_scale
+
+env.viz_support:
+  _type: support
+  app:
+    src: latent
+    tgt: probe
+
+optimizer.objective: loss_cls
+
+wandb:
+  loss_cls: 10
+  loss_sem: 10
+  accuracy: 10
+  accuracy_sem: 10
+
+  latent_mag: 100
+  latent_scale: 100
+  intv_mag: 100
+  intv_scale: 100
+  amd: 100
+
+log:
+  loss_cls: yes
+  loss_sem: yes
+  accuracy: yes
+  accuracy_sem: yes
+

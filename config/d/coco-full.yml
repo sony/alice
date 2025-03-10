@@ -1,0 +1,25 @@
+
+_base: [a/mlp]
+
+dataset:
+  _type: coco
+
+
+
+env.task:
+  _type: multi-classification
+  app:
+    loss: loss_cls
+    macro: accuracy
+
+
+intervention.condition: <>interventions-text-path
+
+
+
+
+
+
+
+
+

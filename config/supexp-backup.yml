@@ -1,0 +1,190 @@
+
+semantic-dim: 64
+nonsemantic-dim: <>noise-dim
+noise-dim: 256
+
+num-slices: 64
+
+batch-size: 128
+lr: 0.001
+
+budget: 100000
+ckpt-freq: 10000
+
+dataset:
+  _type: imagenet-clip
+  app:
+    embedding: observation
+
+model:
+  # _type: supcon-autoencoder
+  _type: supervised-autoencoder
+  app:
+    intervention: semantic
+    noise: prior # created by reg
+    loss: loss_rec
+    features: semantic
+
+env.latent_response:
+  _type: mechanism
+  content: [<>model]
+  select:
+    latent: response
+  apply:
+    observation: reconstruction
+
+env.noisy_response:
+  _type: mechanism
+  content: [<>model]
+  select:
+    latent: noisy_resp
+    reconstruction: noisy_rec
+  apply:
+    latent: probe
+    observation: noisy_rec
+
+env.response_helper:
+  _type: mechanism
+  content: [<>model]
+  select:
+    # semantic: response_semantic
+    prediction: response_pred
+    accuracy: response_accuracy
+    semantic: response_semantic
+    # latent: response
+  apply:
+    latent: response
+    # semantic: response_semantic
+
+env.consistency_loss:
+  _type: mse
+  app:
+    prediction: response_semantic
+    target: semantic
+    loss: loss_con
+
+encoder:
+  _type: mlp
+  hidden: <>enc-hidden
+
+decoder:
+  _type: mlp
+  hidden: <>dec-hidden
+
+classifier:
+  _type: mlp
+  hidden: <>cls-hidden
+
+
+hidden: [512, 512]
+enc-hidden: <>hidden
+dec-hidden: <>hidden
+cls-hidden: [256]
+nonlin: mish
+
+
+env.reg:
+  _type: slice-wae
+  latent-dim: <>nonsemantic-dim
+  app:
+    latent: nonsemantic
+    loss: loss_reg
+
+
+env.criterion:
+  _type: multi-loss
+  wts:
+    rec: <>rec-wt
+    reg: <>reg-wt
+    cls: <>cls-wt
+    con: <>con-wt
+
+env.ref_classifier:
+  _type: clip-cls-imagenet
+  app:
+    prediction: obs_pred
+    accuracy: obs_accuracy
+
+env.ref_rec_classifier:
+  _type: mechanism
+  content: [<>ref_classifier]
+  ignore_gauge: yes # TODO: implement and make default
+  select:
+    obs_accuracy: rec_accuracy
+  apply:
+    obs_pred: reconstruction
+    label: label
+# env.ref_rec_classifier:
+#   _type: clip-cls-imagenet
+#   app:
+#     embedding: reconstruction
+#     prediction: rec_pred
+#     accuracy: rec_accuracy
+
+env.ref_resp_classifier:
+  _type: mechanism
+  content: [<>ref_classifier, <>model]
+  # ignore_gauge: yes # TODO: implement and make default
+  select:
+    obs_accuracy: res_accuracy
+    reconstruction: noisy_rec
+  apply:
+    latent: probe
+    obs_pred: noisy_rec
+    label: label
+
+
+env.accuracy_gap:
+  _type: difference
+  app:
+    score: accuracy
+    reference: response_accuracy
+    difference: accuracy_gap
+
+env.embedding_gap:
+  _type: difference
+  app:
+    score: obs_accuracy
+    reference: rec_accuracy
+    difference: embedding_gap
+
+env.task:
+  _type: classification
+  app:
+    loss: loss_cls
+
+log:
+  loss_rec: yes
+  loss_reg: yes
+  loss_cls: yes
+  loss_con: yes
+
+  accuracy: yes
+  # response_accuracy: yes
+  # accuracy_gap: yes
+
+  # obs_accuracy: yes
+  rec_accuracy: yes
+  res_accuracy: yes
+  # embedding_gap: yes
+
+
+
+rec-wt: 1
+reg-wt: 1
+cls-wt: 1
+con-wt: 1
+
+
+env.checkpointer:
+  _type: checkpointer
+  freq: <>ckpt-freq
+# env.eval._type: evaluator
+
+
+optimizer._type: adam
+
+
+trainer._type: trainer
+planner._type: planner
+reporter._type: reporter

@@ -1,0 +1,132 @@
+
+
+_base: [m/optim/intv, uni]
+
+project-name: "{dataset.name}-ced"
+
+
+model:
+  _type: supervised-autoencoder
+  app:
+    loss: loss_rec
+    features: latent
+
+
+env.detacher:
+  _type: detacher
+  app:
+    original: latent
+    detached: latent_d
+
+env.gt-intervention:
+  _type: intervention/label
+
+intervention.app.ambient: latent_d
+
+
+env.task:
+  _type: classification
+  app.loss: loss_cls
+
+
+
+env.semantic:
+  _type: mechanism
+  content: [<>env.task, <>model]
+  external:
+    loss_cls: loss_sem
+    accuracy: accuracy_sem
+  internal:
+    label: intervention
+    latent: probe
+    # latent: response
+
+
+env.manifold:
+  _type: mechanism
+  content: [<>env.task, <>model]
+  external:
+    loss_cls: loss_man
+    accuracy: accuracy_man
+  internal:
+    label: intervention
+    latent: response
+
+env.probe_response:
+  _type: mechanism
+  content: [<>model]
+  external:
+    latent: response
+  internal:
+    latent: probe
+    observation: reconstruction
+
+
+
+env.viz_latent_mag:
+  _type: vecinfo
+  app:
+    vector: latent
+    magnitude: latent_mag
+    scale: latent_scale
+
+env.viz_intv_mag:
+  _type: vecinfo
+  app:
+    vector: probe
+    magnitude: intv_mag
+    scale: intv_scale
+
+env.viz_support:
+  _type: support
+  app:
+    src: latent
+    tgt: probe
+
+env.criterion:
+  _type: multi-loss
+  wts:
+    rec: <>rec-wt
+    # reg: <>reg-wt
+    cls: <>cls-wt
+    # con: <>con-wt
+
+rec-wt: 10
+# reg-wt: 1
+cls-wt: 1
+
+
+env.viz_intv:
+  _type: mechanism
+  content: [<>env.viz_rec, <>model, <>env.pre]
+  external:
+    rec_comparison: intv_comparison
+  internal:
+    latent: probe
+    image: image
+    label: intervention
+
+
+
+wandb:
+  loss_rec: 10
+  loss_cls: 10
+  loss_sem: 10
+  accuracy: 10
+  accuracy_sem: 10
+
+  rec_comparison: 1000
+  intv_comparison: 1000
+
+  latent_mag: 100
+  latent_scale: 100
+  intv_mag: 100
+  intv_scale: 100
+  amd: 100
+
+log:
+  loss_rec: yes
+  loss_cls: yes
+  loss_sem: yes
+  accuracy: yes
+  accuracy_sem: yes

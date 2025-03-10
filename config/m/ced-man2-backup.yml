@@ -1,0 +1,123 @@
+
+
+
+
+_base: [m/optim/simple, uni]
+
+step2: yes
+
+project-name: "{dataset.name}-ced2"
+
+model:
+  _type: autoencoder
+  _mod.supervised: yes
+  app:
+    loss: loss_rec
+    features: latent
+
+
+env.gt-intervention:
+  _type: intervention/label
+
+intervention.app.ambient: latent
+
+env.intervention_module: <>intervention
+
+env.manifold:
+  _type: mechanism
+  content: [<>env.task, <>model]
+  external:
+    loss_cls: loss_man
+    accuracy: accuracy_man
+    prediction: prediction_man
+  internal:
+    label: intervention
+    latent: response
+
+env.probe_response:
+  _type: mechanism
+  content: [<>model]
+  external:
+    latent: response
+  internal:
+    latent: probe
+    observation: reconstruction
+
+
+env.viz_latent_mag:
+  _type: vecinfo
+  app:
+    vector: latent
+    magnitude: latent_mag
+    scale: latent_scale
+
+env.viz_intv_mag:
+  _type: vecinfo
+  app:
+    vector: probe
+    magnitude: intv_mag
+    scale: intv_scale
+
+env.viz_support:
+  _type: support
+  app:
+    src: latent
+    tgt: probe
+
+env.viz_pred_stats:
+  _type: prediction-gap
+
+  app:
+    ambient: prediction
+    intervened: prediction_man
+
+env.criterion:
+  _type: multi-loss
+  wts:
+    rec: <>rec-wt
+    # reg: <>reg-wt
+    cls: <>cls-wt
+    # con: <>con-wt
+    # man: <>man-wt
+    man: <>man-wt
+
+
+rec-wt: 100
+# reg-wt: 1
+cls-wt: 1
+
+man-wt: 1
+
+
+wandb:
+  loss_rec: 10
+  loss_cls: 10
+  # loss_sem: 10
+  loss_man: 10
+  accuracy: 10
+  # accuracy_sem: 10
+  accuracy_man: 10
+
+  rec_comparison: 1000
+  intv_comparison: 1000
+
+  latent_mag: 100
+  latent_scale: 100
+  intv_mag: 100
+  intv_scale: 100
+  amd: 100
+
+  unchanged_f1: 500
+  changed_f1: 500
+  proximity_stats: 500
+
+log:
+  loss_rec: yes
+  # loss_cls: yes
+  # loss_sem: yes
+  loss_man: yes
+  accuracy: yes
+  # accuracy_sem: yes
+  accuracy_man: yes
+
+

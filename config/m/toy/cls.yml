@@ -1,0 +1,27 @@
+
+_base: [uni, m/optim/simple]
+
+
+project-name: "{dataset.name}-cls"
+
+
+model:
+  _type: classifier
+  extractor: <>encoder
+  head: <>classifier
+
+encoder.output-dim: <>latent-dim
+latent-dim: 4
+
+wandb:
+  loss: 10
+  accuracy: 10
+
+log:
+  loss: yes
+  accuracy: yes
+
+
+env.task._type: classification
+
+

@@ -1,0 +1,9 @@
+_base: [a/mlp]
+
+
+norm: ln
+
+enc-hidden: [<>large-width, <>large-width, <>large-width, <>large-width]
+dec-hidden: [<>large-width, <>large-width, <>large-width, <>large-width]
+cls-hidden: [<>large-width, <>large-width, <>large-width, <>large-width]
+mod-hidden: [<>small-width, <>small-width]

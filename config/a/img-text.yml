@@ -1,0 +1,21 @@
+
+
+text-encoder:
+  _type: mlp
+  hidden: <>enc-hidden
+
+image-encoder:
+  _type: mlp
+  hidden: <>enc-hidden
+
+text-decoder:
+  _type: mlp
+  hidden: <>dec-hidden
+
+image-decoder:
+  _type: mlp
+  hidden: <>dec-hidden
+
+
+
+

@@ -1,0 +1,23 @@
+# _meta.script_name: collect
+
+path: "/data/felix/coco/embeddings/{dataset.split}-{model.name}.h5"
+
+# split: train
+dataset:
+  _type: raw-coco-captions
+
+env.model:
+  _type: bert
+  app:
+    text: caption
+    output: embedding
+
+products:
+  image_id: image_id
+  caption_id: caption_id
+  caption: caption
+  embedding: embedding
+  class_presence: class_presence
+  class_count: class_count
+  # image ids
+  

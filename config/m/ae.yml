@@ -1,0 +1,23 @@
+
+_base: [uni, m/optim/simple]
+
+project-name: "{dataset.name}-ae"
+
+model:
+  _type: autoencoder
+
+# env.viz_rec:
+#   _type: image-ops
+#   axis: 3
+#   app:
+#     src1: image
+#     src2: picture
+#     concat: rec_comparison
+
+wandb:
+  loss: 10
+  rec_comparison: 1000
+
+log:
+  loss: yes
+
